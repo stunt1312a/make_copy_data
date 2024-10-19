@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Manager</title>
+    <style>
+         body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 300px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            background-color: #333;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        #addButton {
+            background-color: #007bff;
+            border: 1px solid #0056b3;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #addButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="buttonContainer"></div>
+    <button id="addButton">+</button>
+
+    <script>
+        const container = document.getElementById('buttonContainer');
+        const addButton = document.getElementById('addButton');
+        let buttonData = JSON.parse(localStorage.getItem('buttons')) || [];
+
+        function renderButtons() {
+            container.innerHTML = '';
+            buttonData.forEach((text, index) => {
+                const button = document.createElement('button');
+                button.textContent = text;
+                button.addEventListener('click', () => copyText(text));
+                button.addEventListener('mousedown', (e) => {
+                    if (e.ctrlKey && e.button === 0) deleteButton(index);
+                });
+                container.appendChild(button);
+            });
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+        }
+
+        function deleteButton(index) {
+            buttonData.splice(index, 1);
+            saveToLocalStorage();
+            renderButtons();
+        }
+
+        function addNewButton() {
+            const newText = prompt("Enter the text for the new button:");
+            if (newText) {
+                buttonData.push(newText);
+                saveToLocalStorage();
+                renderButtons();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('buttons', JSON.stringify(buttonData));
+        }
+
+        addButton.addEventListener('click', addNewButton);
+        renderButtons();
+    </script>
+</body>
+</html>
